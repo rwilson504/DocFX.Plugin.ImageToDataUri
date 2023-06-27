@@ -24,13 +24,13 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release      
+        run: dotnet build --configuration Release --no-restore   
 
-      - name: Install zip
-        uses: montudor/action-zip@v1
+      #- name: Install zip
+      #  uses: montudor/action-zip@v1
 
       - name: Zip output
-        run: zip -qq -r DocFX.Plugin.ImageToDataUri.zip bin\Release\net6.0
+        run: zip -r DocFX.Plugin.ImageToDataUri.zip ./DocFX.Plugin.ImageToDataUri/bin/Release/net6.0/
        
       - name: Create Release
         id: create_release
@@ -50,6 +50,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: DocFX.Plugin.ImageToDataUri.zip
+          asset_path: ./DocFX.Plugin.ImageToDataUri.zip
           asset_name: DocFX.Plugin.ImageToDataUri.zip
           asset_content_type: application/zip
