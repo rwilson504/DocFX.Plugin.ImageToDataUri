@@ -1,4 +1,5 @@
 # DocFX.Plugin.ImageToDataUri
+[![Build and Package](https://github.com/rwilson504/DocFX.Plugin.ImageToDataUri/actions/workflows/package-binaries.yml/badge.svg)](https://github.com/rwilson504/DocFX.Plugin.ImageToDataUri/actions/workflows/package-binaries.yml)  
 A DocFx post processor that converts the src attribute of referenced images to their data-uri.
 
 From this:  
