@@ -1,37 +1,50 @@
 name: Build and Package
-
 on:
   pull_request:
     types:
       - closed
 
 jobs:
-  build-and-package:
+  build:
+    name: Build and Package
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 6.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Build
-      run: dotnet build --configuration Release
+      - name: Build
+        run: dotnet build --configuration Release
 
-    - name: Test
-      run: dotnet test --configuration Release --no-restore
+      - name: Package
+        run: dotnet publish --configuration Release --output ./bin
 
-    - name: Publish
-      run: dotnet publish --configuration Release --output ./publish
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
 
-    - name: Create release package
-      uses: actions/upload-artifact@v2
-      with:
-        name: release-package
-        path: ./publish
+      - name: Upload Release Artifacts
+        id: upload-release-assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/
+          asset_name: DocFX.Plugin.ImageToDataUri.zip
+          asset_content_type: application/zip
