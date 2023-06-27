@@ -1,45 +1,37 @@
-# This workflow builds and publishes a new release when code is merged with the main branch, and updates the version number for each release based on the tag name.
-name: Build, Release and Version on Merge
+name: Build and Package
 
-# This workflow only runs when a pull request is merged into the main branch.
 on:
   pull_request:
-    types: [closed]
-    branches:
-      - main
-    # Only run the workflow if the pull request was merged, not closed or rejected.
-    # If you'd like this to happen for *every* pull request, you can remove this "if" statement.
-    if: github.event.pull_request.merged == true
+    types:
+      - closed
 
 jobs:
-  build:
-    name: Build
+  build-and-package:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1.7.2
-        with:
-          dotnet-version: '5.0.x'
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Build the project and create release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required to create releases and tags
-        with:
-          files_glob: '"./bin/*"'
-          tag_name: v${{ github.event.pull_request.head.sha }}
-          release_name: Release v${{ github.event.pull_request.head.sha }}
-          body: |
-            Compiled binaries for commit SHA ${{ github.event.pull_request.head.sha }}
-            In this release the version has been updated to v${{ github.event.pull_request.head.sha }}
-          draft: false
-          prerelease: false
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
 
-      - name: Tag the release with version number
-        uses: mibexsoftware/release-tag-action@v2.7.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          version_number: ${{ github.event.pull_request.head.sha }}
-          branch_name: main
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release
+
+    - name: Test
+      run: dotnet test --configuration Release --no-restore
+
+    - name: Publish
+      run: dotnet publish --configuration Release --output ./publish
+
+    - name: Create release package
+      uses: actions/upload-artifact@v2
+      with:
+        name: release-package
+        path: ./publish
