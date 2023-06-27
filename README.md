@@ -2,15 +2,15 @@
 A DocFx post processor that converts the src attribute of referenced images to their data-uri.
 
 From this:  
-![image](https://github.com/rwilson504/DocFX.Plugin.ImageToDataUri/assets/7444929/4536bddf-8bbc-4b12-aac9-ad8a79cfa593)
+![Original image src](https://github.com/rwilson504/DocFX.Plugin.ImageToDataUri/assets/7444929/4536bddf-8bbc-4b12-aac9-ad8a79cfa593)
 
 To this:  
-![image](https://github.com/rwilson504/DocFX.Plugin.ImageToDataUri/assets/7444929/ab6e797a-c4e6-40f2-a037-4170f91c2fb6)
+![Updated image src](https://github.com/rwilson504/DocFX.Plugin.ImageToDataUri/assets/7444929/ab6e797a-c4e6-40f2-a037-4170f91c2fb6)
 
 ## Installation/Usage
 1. Create a new folder called image-datauri in your DocFx template folder
-1. Create a new folder called ``plugins`` within the new ``image-datauri`` folder.
-1. Copy the compiled binaries into the ``plugins`` folder
+1. Create a new folder called `plugins` within the new `image-datauri` folder.
+1. Copy the compiled binaries into the `plugins` folder
 1. Open the ``docfx.json`` file and add the new template folder.
 	```
 	"teamplate": [
